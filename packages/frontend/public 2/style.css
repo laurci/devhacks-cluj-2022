@@ -1,3 +1,17 @@
+.flex-container {
+    display: flex;
+    height: 100vh;
+}
+
+.flex-child:first-child {
+    flex: 0 0 280px;
+} 
+
+#main{
+    flex: 1;
+    border: 2px solid #2D3748;    
+}
+
 li{
     list-style: none;
 }
@@ -5,14 +19,6 @@ li{
 #sidebar{
  margin-right: 1rem;
  color: #2D3748;
-}
-
-.float-child{
-    float: left;
-}
-
-#main{
-    border: 2px solid #2D3748;    
 }
 
 ul[title]::before {
