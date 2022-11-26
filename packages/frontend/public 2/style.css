@@ -8,6 +8,7 @@ li{
 
 #sidebar{
  margin-right: 2rem;
+ color: #2D3748;
 }
 
 .float-child{
@@ -15,7 +16,7 @@ li{
 }
 
 #main{
-    border: 2px solid red;
+    border: 2px solid #2D3748;
     width: 900px;
     height: 600px;
     
@@ -27,8 +28,7 @@ ul[title]::before {
     display: block;
     font-weight: bold;
     padding: 4px;
-    background-color: gray;
-    color: white;
+    background-color: #EDF2F7;
 }
 
 li{
@@ -37,13 +37,17 @@ li{
 
 .workspaces li{
     border: 1px solid;
+    margin-left: 20px;
 }
 
+.rooms li ul li{
+    margin:0.25em
+}
 .rooms img{
     vertical-align: middle;
     margin-right: 3px;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
 }
 
 #own-account{
@@ -52,19 +56,30 @@ li{
 }
 #own-account img{
     vertical-align: middle;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     margin-right: 10px;
 }
 
 #handle{
-    /* margin: auto; */
-    text-align: center;
+     margin-left:20px;
+}
+ul.rooms{
+    padding-left: 20px;
+}
+
+ul.workspaces{
+    padding-left: 20px;
+}
+
+ul ul{
+    padding-left: 20px;
 }
 
 #handle select{
     height:25px;
     font-size:14pt;
-    width: 250px;
+    width: 260px;
+    color: #2D3748;
     /* margin: auto; */
 }
