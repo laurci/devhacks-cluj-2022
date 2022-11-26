@@ -3,7 +3,7 @@ li{
 }
 
 #sidebar{
- margin-right: 2rem;
+ margin-right: 1rem;
  color: #2D3748;
 }
 
@@ -12,10 +12,7 @@ li{
 }
 
 #main{
-    border: 2px solid #2D3748;
-    width: 900px;
-    height: 600px;
-    
+    border: 2px solid #2D3748;    
 }
 
 ul[title]::before {
@@ -34,7 +31,6 @@ li{
     border: 1px solid;
     margin-left: 15px;
     padding: 4px;
-    width: 100px;
 }
 
 .rooms li ul li{
