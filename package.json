@@ -1,0 +1,7 @@
+{
+    "name": "devhacks-cluj-2022",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ]
+}
