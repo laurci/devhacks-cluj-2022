@@ -16,9 +16,13 @@ module.exports = {
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
+        fallback: {
+            "path": require.resolve("path-browserify"),
+            "stream": require.resolve("stream-browserify")
+        }
     },
     output: {
         filename: "main.js",
         path: path.resolve(__dirname, "build"),
-    },
+    }
 };
