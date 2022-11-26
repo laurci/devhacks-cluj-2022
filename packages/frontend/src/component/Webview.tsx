@@ -4,6 +4,8 @@ import { HEIGHT, QUALITY, WIDTH } from "../constants";
 
 class WebviewController {
     private canvas?: HTMLCanvasElement;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private events = new Map<string, (ev: any) => void | Promise<void>>();
 
     constructor(
@@ -11,6 +13,7 @@ class WebviewController {
     ) {
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private addEventListener(el: HTMLElement, type: string, listener: (ev: any) => void | Promise<void>) {
         if (!this.events.has(type)) {
             const binding = listener.bind(this);
