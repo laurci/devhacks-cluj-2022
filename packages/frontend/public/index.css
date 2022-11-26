@@ -137,3 +137,11 @@ table {
     background: black !important;
     opacity: 40%;
 }
+
+.map {
+    display: "relative";
+}
+
+body {
+    background-image: url("/assets/background.jpeg") !important;
+}
