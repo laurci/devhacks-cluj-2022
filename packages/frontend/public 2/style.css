@@ -1,0 +1,70 @@
+li{
+    list-style: none;
+}
+
+#handle{
+ margin-bottom: 2rem;
+}
+
+#sidebar{
+ margin-right: 2rem;
+}
+
+.float-child{
+    float: left;
+}
+
+#main{
+    border: 2px solid red;
+    width: 900px;
+    height: 600px;
+    
+}
+
+ul[title]::before {
+    content: attr(title);
+    /* then add some nice styling as needed, eg: */
+    display: block;
+    font-weight: bold;
+    padding: 4px;
+    background-color: gray;
+    color: white;
+}
+
+li{
+    margin:0.5em;
+}
+
+.workspaces li{
+    border: 1px solid;
+}
+
+.rooms img{
+    vertical-align: middle;
+    margin-right: 3px;
+    width: 40px;
+    height: 40px;
+}
+
+#own-account{
+    margin-top: 40px;
+    margin-left: 20px;
+}
+#own-account img{
+    vertical-align: middle;
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+}
+
+#handle{
+    /* margin: auto; */
+    text-align: center;
+}
+
+#handle select{
+    height:25px;
+    font-size:14pt;
+    width: 250px;
+    /* margin: auto; */
+}
