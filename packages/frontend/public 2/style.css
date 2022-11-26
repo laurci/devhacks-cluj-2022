@@ -33,6 +33,8 @@ li{
 .workspaces li{
     border: 1px solid;
     margin-left: 15px;
+    padding: 4px;
+    width: 100px;
 }
 
 .rooms li ul li{
