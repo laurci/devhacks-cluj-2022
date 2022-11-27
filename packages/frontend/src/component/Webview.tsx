@@ -258,7 +258,7 @@ export default function Webview({ page, active, initialX, initialY, onClick }: W
                     borderBottom: "3px solid #d5d5d5",
                     paddingInline: "10px",
                 }}>{subUrl}</span>
-                <IconButton aria-label="reload" icon={<RepeatIcon />} />
+                <IconButton aria-label="reload" icon={<RepeatIcon />} onClick={() => controller?.reload()} />
                 <IconButton aria-label="copy" icon={<CopyIcon />} />
             </Box>
             <Box>
