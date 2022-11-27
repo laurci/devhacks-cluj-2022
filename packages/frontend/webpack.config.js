@@ -24,5 +24,17 @@ module.exports = {
     output: {
         filename: "main.js",
         path: path.resolve(__dirname, "build"),
+    },
+    devServer: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:4001',
+                pathRewrite: { "^/api": "" }
+            },
+            '/socket.io': {
+                target: 'http://localhost:4001',
+                ws: true
+            }
+        }
     }
 };

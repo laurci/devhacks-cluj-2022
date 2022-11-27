@@ -15,8 +15,8 @@ export function isWebviewBoardItem(item: BoardItem): item is WebviewBoardItem {
     return item.type === "webview";
 }
 
-
 export const mockData = {
+    livekitToken: localStorage.getItem("livekitToken") ?? "shit",
     rooms: {
         "room1": {
             name: "Room 1",

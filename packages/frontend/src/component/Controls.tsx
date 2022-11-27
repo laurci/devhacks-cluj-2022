@@ -4,20 +4,24 @@ import { MdFilePresent, MdWebAsset, MdDesktopMac, MdArticle, MdMic, MdHeadphones
 
 import { Browser } from "puppeteer-core";
 import React from "react";
+import { Room } from "livekit-client";
 
 export interface ControlsProps {
     browser: Browser;
+    room: Room;
     setActive: (index: number) => void;
 }
 
-export default function Controls({ browser, setActive }: ControlsProps) {
+export default function Controls({ browser, setActive, room }: ControlsProps) {
     return <Box position="fixed" width="100%" height="40px" bottom={0} left={0} backgroundColor="gray.100" borderTop="1px solid #CBD5E0">
         <Box width="300px" display="inline-block" borderRight="1px solid #CBD5E0">
             <Box display="flex" justifyContent="space-between">
                 <IconButton aria-label="add" icon={<ArrowLeftIcon />} background="gray.100" />
 
                 <Box display="flex" marginRight="10px" alignItems="center">
-                    <IconButton aria-label="mic" icon={<Icon as={MdMic} />} background="gray.100" />
+                    <IconButton aria-label="mic" icon={<Icon as={MdMic} />} background="gray.100" onClick={() => {
+                        room.localParticipant.setMicrophoneEnabled(true);
+                    }} />
                     <IconButton aria-label="headphones" icon={<Icon as={MdHeadphones} />} background="gray.100" />
                     <IconButton aria-label="settings" icon={<Icon as={MdSettings} />} background="gray.100" marginRight="10px" />
 

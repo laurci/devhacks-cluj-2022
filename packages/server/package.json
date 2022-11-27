@@ -1,0 +1,33 @@
+{
+    "name": "server",
+    "description": "Empty project",
+    "version": "0.0.1",
+    "private": true,
+    "author": "Laurentiu Ciobanu",
+    "main": "./dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "clean": "rimraf dist",
+        "format": "prettier --write . && tsfmt -r"
+    },
+    "dependencies": {
+        "@apollo/client": "^3.7.1",
+        "@types/dotenv": "^8.2.0",
+        "dotenv": "^16.0.3",
+        "graphql": "^16.6.0",
+        "socket.io": "^4.5.4"
+    },
+    "devDependencies": {
+        "@types/node": "^18.11.3",
+        "@typescript-eslint/eslint-plugin": "^5.40.0",
+        "@typescript-eslint/parser": "^5.40.0",
+        "eslint": "^8.25.0",
+        "prettier": "^2.7.1",
+        "rimraf": "^3.0.2",
+        "typescript": "npm:@laurci/typescript@latest",
+        "typescript-formatter": "^7.2.2"
+    },
+    "resolutions": {
+        "typescript": "npm:@laurci/typescript@latest"
+    }
+}

@@ -1,8 +1,10 @@
 import { Browser, connect, Page, Target } from "puppeteer-core";
 import React, { useEffect, useRef, useState } from "react";
+import { useRoom } from "@livekit/react-core";
+import type { RoomOptions } from "livekit-client";
 import panzoom from "panzoom";
 import Webview from "./Webview";
-import { GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, HEIGHT, REMOTE_BROWSER_HOST, WIDTH } from "../constants";
+import { GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, HEIGHT, LIVEKIT_DOMAIN, REMOTE_BROWSER_HOST, WIDTH } from "../constants";
 import { bus, FocusEvent } from "../lib/events";
 import Controls from "./Controls";
 import { mockData } from "../lib/mock-data";
@@ -32,12 +34,25 @@ async function setupBrowser() {
 
 const items = mockData.rooms["room1"].items;
 
+const roomOptions: RoomOptions = {
+
+};
+
 export default function Map() {
     const divRef = useRef<HTMLDivElement>();
+
+    const { connect, isConnecting, room } = useRoom(roomOptions);
+
 
     const [pages, setPages] = useState<Page[]>([]);
     const [browser, setBrowser] = useState<Browser>();
     const [activeIndex, setActiveIndex] = useState<number>(-1);
+
+    useEffect(() => {
+        connect(LIVEKIT_DOMAIN, mockData.livekitToken).then(() => {
+            console.log("connected");
+        }).catch(console.error);
+    }, [])
 
     useEffect(() => {
         if (!divRef.current) return;
@@ -84,7 +99,7 @@ export default function Map() {
     }, []);
 
     return <div style={{ position: "relative" }}>
-        <SidePanel />
+        {!isConnecting && room && <SidePanel room={room} />}
         <div ref={ref => divRef.current = ref!} style={{
             width: `${1 + GRID_SIZE_WIDTH * 80}px`,
             height: `${1 + GRID_SIZE_HEIGHT * 80}px`,
@@ -107,6 +122,6 @@ export default function Map() {
                 return <Webview key={key} initialX={item.x} initialY={item.y} active={isActive} onClick={() => setActiveIndex(index)} page={page} />;
             })}
         </div>
-        {browser && <Controls browser={browser} setActive={setActiveIndex} />}
+        {browser && !isConnecting && room && <Controls room={room} browser={browser} setActive={setActiveIndex} />}
     </div>;
 }

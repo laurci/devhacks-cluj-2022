@@ -1,0 +1,11 @@
+type Query {
+    hello: String
+}
+
+type Mutation {
+    hello2: String
+}
+type Organization {
+    id: ID!
+    name: String!
+}
