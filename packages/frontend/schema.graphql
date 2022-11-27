@@ -1,11 +1,36 @@
 type Query {
     hello: String
 }
-
 type Mutation {
-    hello2: String
+    hello: String
 }
+
+type User {
+    id: ID!
+    name: String!
+    profileImage: String!
+    workspaces: [Room!]!
+    livekitToken: String!
+    livekitIdentity: String!
+}
+
 type Organization {
     id: ID!
     name: String!
+    rooms: [Room!]!
+}
+
+type Room {
+    id: ID!
+    name: String!
+    locked: Boolean!
+    participants: [User!]!
+    sharedBrowsers: [SharedBrowser!]!
+}
+
+type SharedBrowser {
+    id: ID!
+    targetId: String!
+    x: Int!
+    y: Int!
 }

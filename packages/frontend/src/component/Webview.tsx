@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { KeyInput, Page } from "puppeteer-core";
-import { HEIGHT, QUALITY, WIDTH } from "../constants";
+import { HEIGHT, QUALITY, ROOM_ID, WIDTH } from "../constants";
 import { bus, FocusEvent } from "../lib/events";
 import { Box, IconButton } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon, CloseIcon, CopyIcon, DragHandleIcon, ExternalLinkIcon, RepeatIcon, SmallCloseIcon } from "@chakra-ui/icons";
@@ -265,17 +265,9 @@ export default function Webview({ page, active, initialX, initialY, onClick }: W
                 <IconButton aria-label="external" icon={<ExternalLinkIcon />} />
                 <IconButton aria-label="close" icon={<SmallCloseIcon />} onClick={() => controller?.close()} />
             </Box>
-
-            {/* <button onClick={() => {
-                bus.emit("focus", {
-                    posX: x,
-                    posY: y,
-                    zoom: 1
-                } as FocusEvent);
-            }}>Focus</button> */}
         </Box>
         <canvas ref={ref => canvasRef.current = ref!} width={WIDTH} height={HEIGHT} style={{ width: `${WIDTH}px`, height: `${HEIGHT}px` }} />
-        {!active ?
+        {!active && !ROOM_ID ?
             <div className="webview-inactive"
                 style={{
                     width: `${WIDTH}px`,

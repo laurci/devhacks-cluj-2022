@@ -1,20 +1,17 @@
 import { Browser, connect, Page, Target } from "puppeteer-core";
 import React, { useEffect, useRef, useState } from "react";
-import { useRoom } from "@livekit/react-core";
-import type { RoomOptions } from "livekit-client";
 import panzoom from "panzoom";
 import Webview from "./Webview";
-import { GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, HEIGHT, LIVEKIT_DOMAIN, REMOTE_BROWSER_HOST, WIDTH } from "../constants";
-import { bus, FocusEvent } from "../lib/events";
+import { GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, HEIGHT, REMOTE_BROWSER_HOST, ROOM_ID, WIDTH } from "../constants";
 import Controls from "./Controls";
-import { mockData } from "../lib/mock-data";
 import SidePanel from "./SidePanel";
+import { useCurrentRoomId } from "../lib/api";
+import client from "../lib/data";
+import { gql } from "../lib/gql";
 
 interface VersionInfo {
     webSocketDebuggerUrl: string;
 }
-
-
 
 async function setupBrowser() {
     const versionInfo: VersionInfo = await fetch(`http://${REMOTE_BROWSER_HOST}/json/version`).then((res) => res.json());
@@ -32,43 +29,38 @@ async function setupBrowser() {
     return browser;
 }
 
-const items = mockData.rooms["room1"].items;
-
-const roomOptions: RoomOptions = {
-
-};
-
 export default function Map() {
     const divRef = useRef<HTMLDivElement>();
 
-    const { connect, isConnecting, room } = useRoom(roomOptions);
-
+    const roomId = useCurrentRoomId();
 
     const [pages, setPages] = useState<Page[]>([]);
     const [browser, setBrowser] = useState<Browser>();
-    const [activeIndex, setActiveIndex] = useState<number>(-1);
+    const [activeId, setActiveId] = useState<string | null>(null);
 
-    useEffect(() => {
-        connect(LIVEKIT_DOMAIN, mockData.livekitToken).then(() => {
-            console.log("connected");
-        }).catch(console.error);
-    }, [])
+    const room = client.use(gql!`
+        fragment RoomInfo on Room {
+            id
+            name
+            sharedBrowsers {
+                id
+                targetId
+                x
+                y
+            }
+        }
+    `, ROOM_ID ?? roomId ?? "");
 
     useEffect(() => {
         if (!divRef.current) return;
 
-        const mapController = panzoom(divRef.current, {
+        panzoom(divRef.current, {
             disableKeyboardInteraction: true,
             beforeWheel(e) {
                 if (e.altKey) return false;
 
                 return true;
             },
-        });
-
-        bus.on("focus", (ev: FocusEvent) => {
-            console.log("focus", ev);
-            mapController.moveTo(300, 300);
         });
     }, [divRef.current]);
 
@@ -97,31 +89,24 @@ export default function Map() {
                 setBrowser(browser);
             });
     }, []);
+    if (!room || !roomId) return null;
 
     return <div style={{ position: "relative" }}>
-        {!isConnecting && room && <SidePanel room={room} />}
+        {!ROOM_ID && <SidePanel roomId={roomId} />}
         <div ref={ref => divRef.current = ref!} style={{
             width: `${1 + GRID_SIZE_WIDTH * 80}px`,
             height: `${1 + GRID_SIZE_HEIGHT * 80}px`,
             backgroundImage: "url(/assets/grid.svg)",
         }}>
-            {pages.map((page, index) => {
-                const key = (page.target() as any)._targetId as string;
-                let item = items[index];
+            {room.sharedBrowsers.map((browser) => {
+                const isActive = browser.id == activeId;
 
-                if (!item) {
-                    item = {
-                        x: 1000,
-                        y: 1000,
-                        type: "webview",
-                    };
-                }
+                const page = pages.find((page) => (page.target() as any)._targetId == browser.targetId);
+                if (!page) return null;
 
-                const isActive = index == activeIndex;
-
-                return <Webview key={key} initialX={item.x} initialY={item.y} active={isActive} onClick={() => setActiveIndex(index)} page={page} />;
+                return <Webview key={browser.id} initialX={browser.x} initialY={browser.y} active={isActive} onClick={() => setActiveId(browser.id)} page={page} />;
             })}
         </div>
-        {browser && !isConnecting && room && <Controls room={room} browser={browser} setActive={setActiveIndex} />}
+        {browser && !ROOM_ID && <Controls roomId={roomId} browser={browser} />}
     </div>;
 }

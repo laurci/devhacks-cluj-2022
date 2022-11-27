@@ -5,26 +5,51 @@ import { MdLock, MdRadioButtonUnchecked } from "react-icons/md";
 import type { Room } from "livekit-client";
 import { gql } from "../lib/gql";
 import client from "../lib/data";
+import { USER_ID } from "../constants";
+import api from "../lib/api";
 
 export interface SidePanelProps {
-    room: Room;
+    roomId: string;
 }
 
-export default function SidePanel({ room }: SidePanelProps) {
-    room.participants.forEach(participant => {
-        console.log(participant.identity);
-    });
+export default function SidePanel({ roomId }: SidePanelProps) {
+
+    const user = client.use(gql!`
+        fragment User on User {
+            id,
+            name,
+            workspaces {
+                id,
+                name,
+                participants {
+                    id,
+                }
+            }
+        }
+    `, USER_ID);
 
     const org = client.use(gql!`
         fragment Org on Organization {
             id,
-            name
+            name,
+            rooms {
+                id,
+                name,
+                locked,
+                participants {
+                    id,
+                    name,
+                    profileImage,
+                    livekitIdentity
+                }
+            }
         }
     `, "ROOT");
 
     console.log("org", org);
+    console.log("user", user);
 
-    if (!org) return null;
+    if (!user || !org) return null;
 
     return <Box
         background="gray.50"
@@ -41,75 +66,43 @@ export default function SidePanel({ room }: SidePanelProps) {
 
         <Box paddingLeft="10px" paddingTop="15px" paddingRight="15px">
             <Box>
-
                 <Box display="flex" alignItems="center" justifyContent="space-between" marginTop="10px">
-                    <Button background="gray.50" size="sm" leftIcon={<TriangleDownIcon />} onClick={() => {
-                        client.write(gql!`
-                            fragment Org on Organization {
-                                id,
-                                name
-                            }
-                        `, "ROOT", {
-                            id: "ROOT",
-                            name: "ACME Corp " + Math.random()
-                        });
-                    }}>Rooms</Button>
+                    <Button background="gray.50" size="sm" leftIcon={<TriangleDownIcon />}>Rooms</Button>
                     <IconButton background="gray.50" aria-label="add" size="sm" icon={<AddIcon />} />
                 </Box>
-                <Box background="gray.50" flexDirection="column" display="flex" marginTop="10px" width="100%">
-                    <Button background="gray.50" size="sm" fontWeight="normal" leftIcon={<Icon as={MdLock} />} marginLeft="10px" width="calc(100% - 15px)" justifyContent="start" isActive>Room 1</Button>
-                    <Box display="flex" alignItems="center">
-                        <Avatar src="https://avatars.githubusercontent.com/u/5719762?s=40&v=4" width="25px" height="25px" marginTop="5px" marginLeft="25px" />
-                        <Text fontSize="md" marginLeft="8px" paddingTop="5px">Laurentiu Ciobanu</Text>
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                        <Avatar src="https://avatars.githubusercontent.com/u/5719762?s=40&v=4" width="25px" height="25px" marginTop="5px" marginLeft="25px" />
-                        <Text fontSize="md" marginLeft="8px" paddingTop="5px">Gicu Boilere</Text>
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                        <Avatar src="https://avatars.githubusercontent.com/u/5719762?s=40&v=4" width="25px" height="25px" marginTop="5px" marginLeft="25px" />
-                        <Text fontSize="md" marginLeft="8px" paddingTop="5px">Gicu Cazane</Text>
-                    </Box>
-                </Box>
 
-
-                <Box background="gray.50" flexDirection="column" display="flex" marginTop="10px" width="100%">
-                    <Button background="gray.50" size="sm" fontWeight="normal" leftIcon={<Icon as={MdRadioButtonUnchecked} />} marginLeft="10px" width="calc(100% - 15px)" justifyContent="start">Room 2</Button>
-                    <Box display="flex" alignItems="center">
-                        <Avatar src="https://avatars.githubusercontent.com/u/5719762?s=40&v=4" width="25px" height="25px" marginTop="5px" marginLeft="25px" />
-                        <Text fontSize="md" marginLeft="8px" paddingTop="5px">Laurentiu Ciobanu</Text>
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                        <Avatar src="https://avatars.githubusercontent.com/u/5719762?s=40&v=4" width="25px" height="25px" marginTop="5px" marginLeft="25px" />
-                        <Text fontSize="md" marginLeft="8px" paddingTop="5px">Gicu Boilere</Text>
-                    </Box>
-                </Box>
-
+                {
+                    org.rooms.map(room => (
+                        <Box background="gray.50" flexDirection="column" display="flex" marginTop="10px" width="100%">
+                            <Button background="gray.50" size="sm" fontWeight="normal" leftIcon={room.locked ? <Icon as={MdLock} /> : <Icon as={MdRadioButtonUnchecked} />} marginLeft="10px" width="calc(100% - 15px)" justifyContent="start" isActive={roomId == room.id} onClick={() => {
+                                api.join(room.id);
+                            }}>{room.name}</Button>
+                            {
+                                room.participants.map(participant => (
+                                    <Box display="flex" alignItems="center">
+                                        <Avatar src={participant.profileImage} className={`avatar-${participant.livekitIdentity}`} width="25px" height="25px" marginTop="5px" marginLeft="25px" />
+                                        <Text fontSize="md" marginLeft="8px" paddingTop="5px">{participant.name}</Text>
+                                    </Box>
+                                ))
+                            }
+                        </Box>
+                    ))
+                }
             </Box>
 
             <Box>
-
                 <Box display="flex" alignItems="center" justifyContent="space-between" marginTop="10px" marginBottom="5px">
                     <Button background="gray.50" size="sm" leftIcon={<TriangleDownIcon />}>Your workspaces</Button>
                     <IconButton background="gray.50" aria-label="add" size="sm" icon={<AddIcon />} />
                 </Box>
 
-                <Box background="gray.50" flexDirection="column" display="flex" marginTop="2px" width="100%">
-                    <Button background="gray.50" size="sm" fontWeight="normal" leftIcon={<Icon as={MdLock} />} marginLeft="10px" width="calc(100% - 15px)" justifyContent="start">Workspace 1</Button>
-                </Box>
-
-                <Box background="gray.50" flexDirection="column" display="flex" marginTop="2px" width="100%">
-                    <Button background="gray.50" size="sm" fontWeight="normal" leftIcon={<Icon as={MdLock} />} marginLeft="10px" width="calc(100% - 15px)" justifyContent="start">Workspace 2</Button>
-                </Box>
-
-                <Box background="gray.50" flexDirection="column" display="flex" marginTop="2px" width="100%">
-                    <Button background="gray.50" size="sm" fontWeight="normal" leftIcon={<Icon as={MdLock} />} marginLeft="10px" width="calc(100% - 15px)" justifyContent="start">Workspace 3</Button>
-                </Box>
-
-                <Box background="gray.50" flexDirection="column" display="flex" marginTop="2px" width="100%">
-                    <Button background="gray.50" size="sm" fontWeight="normal" leftIcon={<Icon as={MdLock} />} marginLeft="10px" width="calc(100% - 15px)" justifyContent="start">Workspace 4</Button>
-                </Box>
-
+                {user.workspaces.map(workspace =>
+                    <Box key={workspace.id} background="gray.50" flexDirection="column" display="flex" marginTop="2px" width="100%">
+                        <Button background="gray.50" size="sm" fontWeight="normal" leftIcon={<Icon as={MdLock} />} marginLeft="10px" width="calc(100% - 15px)" justifyContent="start" isActive={roomId == workspace.id} onClick={() => {
+                            api.join(workspace.id);
+                        }}>{workspace.name}</Button>
+                    </Box>
+                )}
             </Box>
         </Box>
     </Box>

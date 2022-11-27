@@ -37,9 +37,12 @@ export type FragmentType<T> = T extends { fragment: infer U } ? U : never;
 const client = {
     read<T extends GQLFragmentDefinition<any>>(fragment: T, id: string): FragmentType<T> {
         const doc = (fragment as any).__doc as DocumentNode;
+        const definition = doc.definitions[0]! as FragmentDefinitionNode;
+        const typename = definition.typeCondition.name.value;
 
-        const data = apollo.cache.readFragment({
-            id,
+
+        const data = apollo.readFragment({
+            id: `${typename}:${id}`,
             fragment: doc,
         });
 
@@ -90,13 +93,161 @@ export default client;
 
 sock.on("seed", () => {
     client.write(gql!`
+        fragment User on User {
+            id,
+            name,
+            profileImage,
+            livekitToken,
+            livekitIdentity,
+            workspaces {
+                id,
+                name,
+                participants {
+                    id
+                },
+                sharedBrowsers {
+                    id
+                }
+            }
+        }
+    `, "user-1", {
+        __typename: "User",
+        id: "user-1",
+        name: "Laurentiu Ciobanu",
+        profileImage: "https://avatars.githubusercontent.com/u/5719762?s=40&v=4",
+        livekitIdentity: "user-faaf1ac0",
+        livekitToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njk1ODc2ODUsImlzcyI6IkFQSTVvYnZ2cWU5ZjVyNSIsIm5iZiI6MTY2OTUwMTI4NSwic3ViIjoidXNlci1mYWFmMWFjMCIsInZpZGVvIjp7InJvb20iOiJyb29tLTA0NDc1YjI3Iiwicm9vbUpvaW4iOnRydWV9fQ.kN3oHmigjqKsBooL0mOVSGkKFrltljS3Juhll9Me4sI",
+        workspaces: [
+            {
+                __typename: "Room",
+                id: "workspace-1",
+                name: "Personal Space",
+                participants: [],
+                sharedBrowsers: []
+            },
+            {
+                __typename: "Room",
+                id: "workspace-2",
+                name: "Scrum research",
+                participants: [],
+                sharedBrowsers: []
+            }
+        ]
+    });
+
+    client.write(gql!`
+        fragment User on User {
+            id,
+            name,
+            profileImage,
+            livekitToken,
+            livekitIdentity,
+            workspaces {
+                id,
+                name,
+                participants {
+                    id
+                },
+                sharedBrowsers {
+                    id
+                }
+            }
+        }
+    `, "user-2", {
+        __typename: "User",
+        id: "user-2",
+        name: "Dan Poka",
+        profileImage: "https://avatars.githubusercontent.com/u/9885905?s=64&v=4",
+        livekitIdentity: "user-36cad150",
+        livekitToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njk1ODc2ODUsImlzcyI6IkFQSTVvYnZ2cWU5ZjVyNSIsIm5iZiI6MTY2OTUwMTI4NSwic3ViIjoidXNlci0zNmNhZDE1MCIsInZpZGVvIjp7InJvb20iOiJyb29tLTA0NDc1YjI3Iiwicm9vbUpvaW4iOnRydWV9fQ.7u9NLcV2FIWUQv3VlRfXwgWzT4lT4T6bhGjpOPDn9jc",
+        workspaces: [
+            {
+                __typename: "Room",
+                id: "workspace-3",
+                name: "Personal Space",
+                participants: [],
+                sharedBrowsers: []
+            },
+        ]
+    });
+    client.write(gql!`
         fragment Org on Organization {
             id
             name
+            rooms {
+                id
+                name,
+                locked,
+                participants {
+                    id
+                },
+                sharedBrowsers {
+                    id
+                }
+            }
         }
     `, "ROOT", {
         id: "ROOT",
         name: "Leap Office",
+        rooms: [
+            {
+                __typename: "Room",
+                id: "room-0",
+                name: "Chill",
+                locked: false,
+                participants: [
+                    {
+                        __typename: "User",
+                        id: "user-1"
+                    },
+                    {
+                        __typename: "User",
+                        id: "user-2"
+                    }
+                ],
+                sharedBrowsers: []
+            },
+            {
+                __typename: "Room",
+                id: "room-1",
+                name: "Devops Daily",
+                locked: false,
+                participants: [],
+                sharedBrowsers: []
+            },
+            {
+                __typename: "Room",
+                id: "room-2",
+                name: "Alliantz Porject",
+                locked: true,
+                participants: [],
+                sharedBrowsers: []
+            },
+            {
+                __typename: "Room",
+                id: "room-3",
+                name: "Edison (Bucharest)",
+                locked: false,
+                participants: [],
+                sharedBrowsers: []
+            },
+            {
+                __typename: "Room",
+                id: "room-4",
+                name: "Growth team",
+                locked: true,
+                participants: [],
+                sharedBrowsers: []
+            },
+            {
+                __typename: "Room",
+                id: "room-5",
+                name: "Interview room",
+                locked: true,
+                participants: [],
+                sharedBrowsers: []
+            }
+        ]
     });
 
     setTimeout(() => {

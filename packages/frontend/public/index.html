@@ -1,7 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Webpack</title>
+        <title>Leap Office</title>
+        <script>
+            const query = new URLSearchParams(window.location.search);
+            const user = query.get("user");
+            if (user) {
+                localStorage.setItem("user", user);
+                window.location.replace("https://office.remote.ciobanu.dev");
+            }
+
+            const room = query.get("room");
+            if (room) {
+                localStorage.setItem("room", room);
+                window.location.replace("https://office.remote.ciobanu.dev");
+            }
+        </script>
         <script src="/main.js" defer></script>
         <link rel="stylesheet" href="/index.css" />
     </head>

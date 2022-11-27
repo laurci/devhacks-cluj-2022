@@ -6,4 +6,9 @@ export interface FocusEvent {
     zoom: number;
 }
 
+export interface SpeakingEvent {
+    isSpeaking: boolean;
+    identity: string;
+}
+
 export const bus = new EventEmitter();
