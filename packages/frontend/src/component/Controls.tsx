@@ -92,7 +92,9 @@ export default function Controls({ browser, roomId }: ControlsProps) {
                         }} />
                         <IconButton aria-label="file" icon={<Icon as={MdFilePresent} color="green" />} background="gray.100" />
                         <IconButton aria-label="screen" icon={<Icon as={MdDesktopMac} color="purple" />} background="gray.100" />
-                        <IconButton aria-label="note" icon={<Icon as={MdArticle} color="orange" />} background="gray.100" />
+                        <IconButton aria-label="note" icon={<Icon as={MdArticle} color="orange" onClick={() => {
+                            api.createNote(roomId);
+                        }} />} background="gray.100" />
                     </Box>
                     <Box>
                         <Button rightIcon={<LinkIcon />}>Share</Button>

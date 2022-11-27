@@ -26,6 +26,7 @@ type Room {
     locked: Boolean!
     participants: [User!]!
     sharedBrowsers: [SharedBrowser!]!
+    notes: [Note!]
 }
 
 type SharedBrowser {
@@ -33,4 +34,13 @@ type SharedBrowser {
     targetId: String!
     x: Int!
     y: Int!
+}
+
+type Note {
+    id: ID!
+    x: Int!
+    y: Int!
+    width: Int!
+    height: Int!
+    content: String!
 }

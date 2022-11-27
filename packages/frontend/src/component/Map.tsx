@@ -8,6 +8,7 @@ import SidePanel from "./SidePanel";
 import { useCurrentRoomId } from "../lib/api";
 import client from "../lib/data";
 import { gql } from "../lib/gql";
+import Note from "./Note";
 
 interface VersionInfo {
     webSocketDebuggerUrl: string;
@@ -47,6 +48,14 @@ export default function Map() {
                 targetId
                 x
                 y
+            }
+            notes {
+                id,
+                x,
+                y,
+                width,
+                height,
+                content
             }
         }
     `, ROOM_ID ?? roomId ?? "");
@@ -106,6 +115,7 @@ export default function Map() {
 
                 return <Webview key={browser.id} initialX={browser.x} initialY={browser.y} active={isActive} onClick={() => setActiveId(browser.id)} page={page} />;
             })}
+            {room.notes?.map(note => <Note key={note.id} noteId={note.id} />)}
         </div>
         {browser && !ROOM_ID && <Controls roomId={roomId} browser={browser} />}
     </div>;

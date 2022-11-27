@@ -176,6 +176,43 @@ const api = {
             id: roomId,
             sharedBrowsers: [...room.sharedBrowsers, { __typename: "Browser", id: crypto.randomUUID(), targetId, ...position }]
         });
+    },
+    createNote(roomId: string) {
+        const room = client.read(gql!`
+            fragment Room on Room {
+                id
+                notes {
+                    id,
+                    x,
+                    y,
+                    width,
+                    height
+                    content
+                }
+            }
+        `, roomId);
+
+        if (!room) {
+            return;
+        }
+
+        client.write(gql!`
+            fragment Room on Room {
+                id
+                notes {
+                    id,
+                    x,
+                    y,
+                    width,
+                    height,
+                    content
+                }
+            }
+        `, roomId, {
+            __typename: "Room",
+            id: roomId,
+            notes: [...room.notes ?? [], { __typename: "Note", id: crypto.randomUUID(), x: 100, y: 100, width: 200, height: 200, content: "The world is yours" }]
+        });
     }
 }
 
